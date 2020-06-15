@@ -6,7 +6,7 @@
 
 set -Ceuo pipefail
 
-: "${GRAFANA_URL:='https://graphite-us-central1.grafana.net/metrics'}"
+: "${GRAFANA_URL:=https://graphite-us-central1.grafana.net/metrics}"
 [ -n "${GRAFANA_USER_ID:-}" ] || { echo "GRAFANA_USER_ID not set" >&2; }
 [ -n "${GRAFANA_API_KEY:-}" ] || { echo "GRAFANA_API_KEY not set" >&2; }
 : "${METRIC_NAME_PREFIX:=certificate.}"
@@ -29,8 +29,8 @@ readonly METRIC_FORMAT="$(cat <<-"-"
 {
   "name": "%s",
   "interval": 10,
-  "value": %d,
   "time": %d,
+  "value": %d,
   "mtype": "gauge"
 },
 -
@@ -53,4 +53,4 @@ readonly METRICS=$(
 )
 
 [ -z "${GRAFANA_API_KEY:-}" ] && echo "[${METRICS%?}]" ||
-  echo "$CURL" -u "$GRAFANA_USER_ID:$GRAFANA_API_KEY" -H "Content-Type: application/json" "$GRAFANA_URL" -sS -d "[${METRICS%?}]"
+  "$CURL" -u "$GRAFANA_USER_ID:$GRAFANA_API_KEY" -H "Content-Type: application/json" "$GRAFANA_URL" -sS -d "[${METRICS%?}]"
