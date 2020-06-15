@@ -39,7 +39,7 @@ readonly METRICS=$(
   for host in "$@" ${HOSTS:-}; do
     metricName="$METRIC_NAME_PREFIX${host//[^a-zA-Z0-9]/_}"
     [[ "$host" == *:* ]] || host="$host:443"
-    cert=$("$OPENSSL" s_client -connect "$host" -strict -verify_quiet < /dev/null)
+    cert=$("$OPENSSL" s_client -connect "$host" -servername "${host%:*}" -strict -verify_quiet < /dev/null)
     notBefore="$("$OPENSSL" x509 -startdate -noout <<< "$cert")"
     notBefore="$("$DATE" -d "${notBefore#*=}" '+%s')"
     notAfter="$("$OPENSSL" x509 -enddate -noout <<< "$cert")"
